@@ -6,12 +6,14 @@ using UnityEngine.SceneManagement;
 
 public class PlayerScript : MonoBehaviour
 {
+    private static int currentLevel = 1;
     private int health=100;
-    public Text healthText;
+    private int score = 0;
+    public Text healthText , scoreText;
     public Slider healthSlider;
     public Camera mycamera;
     private AudioSource s;
-    public AudioClip attackSound;
+    public AudioClip attackSound , collectSound;
 
     public void Start(){
         s = mycamera.GetComponent<AudioSource>();
@@ -30,8 +32,23 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    public void OnTrigger(Collider x){
-        
+    public void OnTriggerEnter(Collider x){
+        if (x.tag == "pickup") {
+            s.PlayOneShot(collectSound);
+            score++;
+            scoreText.text = "score: " + score;
+            x.gameObject.SetActive(false);
+
+            if (score == 8){
+
+                currentLevel++;
+           
+                if(currentLevel == 3){
+                    SceneManager.LoadScene("WIN");
+                }
+                SceneManager.LoadScene("Level " + currentLevel);
+            }
+        }
     }
 
 }
